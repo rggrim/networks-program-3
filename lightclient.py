@@ -64,7 +64,7 @@ if __name__ == '__main__':
             F = 'N'
             while ((A != 'Y') & (S != 'Y') & (F != 'N')):
                 # Send the SYN packet
-                seqNum = sequenceNumber = random.randint(0, 2147483647)                                             #CHANGED v
+                seqNum = random.randint(0, 2147483647)                                             #CHANGED v
                 ackNum = 0
                 ack = 'N'
                 syn = 'Y'
@@ -72,7 +72,7 @@ if __name__ == '__main__':
                 payload = ''
                 print(f"Sending SYN Packet to server", file=log)
                 #response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
-                header = struct.pack('!IIcccI', sequenceNum, ackNum, ack, syn, fin, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
+                header = struct.pack('!IIcccI', seqNum, ackNum, ack, syn, fin, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
                 packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
                 s.sendall(packet) # Send the packet to the server
     
