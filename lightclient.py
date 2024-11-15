@@ -31,7 +31,7 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):             
         with open(logfile, 'a') as log:
             print(f"Command Successful", file=log)
 
-    return message
+    return message, sequenceNum, ackNum, A, S, F, lenPayload
 
 
 
@@ -51,6 +51,7 @@ if __name__ == '__main__':
             A = 'N'
             S = 'N'
             F = 'N'
+
             while ((A != 'Y') & (S != 'Y') & (F != 'N')):
                 #*****************SENDING SYN PACKET*****************#
                 seqNum = random.randint(0, 2147483647)                                             #CHANGED v
@@ -71,6 +72,7 @@ if __name__ == '__main__':
                 server_message = s.recv(lenPayload)
                 message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
 
+
             #***********************SENDING ACK PACKET**********************#
             seqNum = recvdAckNum                                                                                #CHANGED v
             ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
@@ -79,7 +81,8 @@ if __name__ == '__main__':
             fin = 'N'
             payload = ''
             print(f"Sending ACK Packet to server", file=log)
-            response = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+            response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+
 
             #********************INITIATE CONTINUOUS MOTION SENSING******************#
             stillRunning = True
@@ -92,7 +95,7 @@ if __name__ == '__main__':
                 fin = 'N'
                 payload = '72'
                 print(f"sending number of blinks and duration to server", file=log)
-                response = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
 
 
