@@ -105,7 +105,8 @@ if __name__ == '__main__':
             #Get Response SYN-ACK                                                                                #changed; instead of going to send_packet function,
             server_packet = s.recv(struct.calcsize('!IIccc'))                                                    #just handle sending and receiving in main 
             sequenceNum, ackNum, A, S, F = struct.unpack('!IIccc', server_packet)                                #for the syn-ack process
-            
+            server_message = s.recv(message_len)
+            message = struct.unpack(f'!{message_len}s', server_message)[0].decode('utf-8')
 
             
              # Send the ACK packet
