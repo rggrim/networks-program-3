@@ -91,13 +91,5 @@ if __name__ == '__main__':
             print(f"Sending ACK Packet to server", file=log)
             response = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
-
-            
-            if is_accepted:                                                                                    #neeeds to be changed, we'r eno longer using is accepted since it's related to the version
-
-                # Send the LIGHTON and LIGHTOFF commands
-                response, is_accepted = send_packet(s, 1, "LIGHTON", args.l)
-                response, is_accepted = send_packet(s, 2, "LIGHTOFF", args.l)
-            
             with open(args.l, 'a') as log:
                 print("Closing socket", file=log)
