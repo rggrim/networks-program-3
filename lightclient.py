@@ -42,6 +42,43 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload):                      
 
     return message, valid
 
+
+
+
+    # Sends and Receives the packet from the server
+def send_ACK_SYN(s, sequenceNum, ackNum, A, S, F, payload):                                                         #CHANGED
+    valid = True
+    packet = create_packet(sequenceNum, ackNum, A, S, F, payload)                                                  #CHANGED
+    s.sendall(packet) # Send the packet to the server
+
+    # Receive the response header from the server
+    server_packet = s.recv(struct.calcsize('!IIccc'))
+    sequenceNum, ackNum, A, S, F = struct.unpack('!IIccc', server_packet)
+
+    with open(logfile, 'a') as log:
+        print(f"Received Data: sequenceNum: {sequenceNum} ackNum: {ackNum} A: {A} S: {S} F: {F}", file=log)
+    if ver == 17: # If version is 17, accept                                                                    ##NEEDS TO BE CHANGED; WE NO LONGER NEED TO WORRY 
+                                                                                                                ##ABOUT VERSION NUMBER
+        with open(logfile, 'a') as log:
+            print(f"VERSION ACCEPTED", file=log)
+    else: # Else, log the mismatch
+        with open(logfile, 'a') as log:
+            print(f"VERSION MISMATCH", file=log)
+        valid = False
+    # Receive the message from the server
+    server_message = s.recv(message_len)
+    message = struct.unpack(f'!{message_len}s', server_message)[0].decode('utf-8')
+    # Log the message from the server
+    with open(logfile, 'a') as log:
+        print(f"Received Message {message}", file=log)
+    if message == "SUCCESS":
+        with open(logfile, 'a') as log:
+            print(f"Command Successful", file=log)
+
+    return message, valid
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Client for packet creation and sending.")
     parser.add_argument('-s', type=str, required=True, help='Server IP address')
@@ -56,23 +93,29 @@ if __name__ == '__main__':
         with open(args.l, 'a') as log:
             
             # Send the SYN packet
-            seqNum = 12345                                                                                    #CHANGED v
+            seqNum = sequenceNumber = random.randint(0, 2147483647)                                             #CHANGED v
             ackNum = 0
             ack = 'N'
             syn = 'Y'
             fin = 'N'
             payload = ''
-            print(f"Sending SYN Packet", file=log)
+            print(f"Sending SYN Packet to server", file=log)
             response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
+            #Get Response SYN-ACK                                                                                #changed; instead of going to send_packet function,
+            server_packet = s.recv(struct.calcsize('!IIccc'))                                                    #just handle sending and receiving in main 
+            sequenceNum, ackNum, A, S, F = struct.unpack('!IIccc', server_packet)                                #for the syn-ack process
+            
+
+            
              # Send the ACK packet
             seqNum = recvdAckNum                                                                                #CHANGED v
-            ackNum = recvdSeqNum + len(recv
-            ack = 'N'
-            syn = 'Y'
+            ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
+            ack = 'Y'
+            syn = 'N'
             fin = 'N'
             payload = ''
-            print(f"Sending SYN Packet", file=log)
+            print(f"Sending ACK Packet to server", file=log)
             response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
 
