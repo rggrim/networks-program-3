@@ -71,7 +71,9 @@ if __name__ == '__main__':
                 fin = 'N'
                 payload = ''
                 print(f"Sending SYN Packet to server", file=log)
-                response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+                #response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+                header = struct.pack('!IIcccI', sequenceNum, ackNum, A, S, F, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
+                packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
     
                 ##### RECEIVING SYN-ACK ######                                                                        #changed; instead of going to send_packet function,
                 server_packet = s.recv(struct.calcsize('!IIcccI'))                                                    #just handle sending and receiving in main 
