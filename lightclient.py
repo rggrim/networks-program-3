@@ -52,7 +52,7 @@ if __name__ == '__main__':
             S = 'N'
             F = 'N'
             while ((A != 'Y') & (S != 'Y') & (F != 'N')):
-                # Send the SYN packet
+                #*****************SENDING SYN PACKET*****************#
                 seqNum = random.randint(0, 2147483647)                                             #CHANGED v
                 ackNum = 0
                 ack = 'N'
@@ -65,13 +65,13 @@ if __name__ == '__main__':
                 packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
                 s.sendall(packet) # Send the packet to the server
     
-                ##### RECEIVING SYN-ACK ######                                                                        #changed; instead of going to send_packet function,
+                #*******************RECEIVING SYN-ACK*********************#                                                                        #changed; instead of going to send_packet function,
                 server_packet = s.recv(struct.calcsize('!IIcccI'))                                                    #just handle sending and receiving in main 
                 recvdSeqNum, recvdAckNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)                #for the syn-ack process
                 server_message = s.recv(lenPayload)
                 message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
 
-            ###### SENDING ACK PACKET #######
+            #***********************SENDING ACK PACKET**********************#
             seqNum = recvdAckNum                                                                                #CHANGED v
             ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
             ack = 'Y'
@@ -81,7 +81,7 @@ if __name__ == '__main__':
             print(f"Sending ACK Packet to server", file=log)
             response = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
-            ####### INITIATE CONTINUOUS MOTION SENSING #######
+            #********************INITIATE CONTINUOUS MOTION SENSING******************#
             stillRunning = True
 
             while stillRunning:
