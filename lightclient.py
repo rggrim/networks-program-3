@@ -97,6 +97,15 @@ if __name__ == '__main__':
                 print(f"sending number of blinks and duration to server", file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
+                seqNum = recvdAckNum                                                                                #CHANGED v
+                ackNum = recvdSeqNum + 1 + lenPayload
+                ack = 'Y'
+                syn = 'N'
+                fin = 'N'
+                payload = 'Motion Detected'
+                print(f"Telling server motion detected", file=log)
+                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+
 
 
             with open(args.l, 'a') as log:
