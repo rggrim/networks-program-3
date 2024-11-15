@@ -6,7 +6,6 @@ import argparse
 def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
 
-
     #The payload of each UDP packet sent by server and client MUST start with the following 12-byte header. 
     #Sequence Number (32 bits): If SYN is present (the S flag is set) the sequence number is the initial sequence number (randomly choosen).
     # Acknowledgement Number (32 bits): If the ACK bit is set, this field contains the value of the next sequence number the sender of the segment is expecting to receive. Once a connection is established this is always sent.
