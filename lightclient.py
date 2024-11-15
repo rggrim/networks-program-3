@@ -12,7 +12,6 @@ def create_packet(sequenceNum, ackNum, A, S, F, payload):                       
 
 # Sends and Receives the packet from the server
 def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):                                                         #CHANGED
-    valid = True
     packet = create_packet(sequenceNum, ackNum, A, S, F, payload)                                                  #CHANGED
     s.sendall(packet) # Send the packet to the server
 
@@ -42,7 +41,7 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):             
         with open(logfile, 'a') as log:
             print(f"Command Successful", file=log)
 
-    return message, valid
+    return message
 
 
 
@@ -90,11 +89,11 @@ if __name__ == '__main__':
             fin = 'N'
             payload = ''
             print(f"Sending ACK Packet to server", file=log)
-            response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+            response = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
 
             
-            if is_accepted:
+            if is_accepted:                                                                                    #neeeds to be changed, we'r eno longer using is accepted since it's related to the version
 
                 # Send the LIGHTON and LIGHTOFF commands
                 response, is_accepted = send_packet(s, 1, "LIGHTON", args.l)
