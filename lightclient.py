@@ -94,6 +94,16 @@ if __name__ == '__main__':
             ####### INITIATE CONTINUOUS MOTION SENSING #######
             stillRunning = True
 
+            while stillRunning:
+                seqNum = recvdAckNum                                                                                #CHANGED v
+                ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
+                ack = 'Y'
+                syn = 'N'
+                fin = 'N'
+                payload = ''                                                #NEED TO CREAT NUM BLINKS AND DRUATION PAYLOAF
+                print(f"sending number of blinks and duration to server", file=log)
+                response = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+
 
 
             with open(args.l, 'a') as log:
