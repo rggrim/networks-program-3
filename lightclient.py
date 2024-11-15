@@ -81,7 +81,7 @@ if __name__ == '__main__':
                 server_message = s.recv(lenPayload)
                 message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
 
-             # Send the ACK packet
+            ###### SENDING ACK PACKET #######
             seqNum = recvdAckNum                                                                                #CHANGED v
             ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
             ack = 'Y'
@@ -90,6 +90,11 @@ if __name__ == '__main__':
             payload = ''
             print(f"Sending ACK Packet to server", file=log)
             response = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+
+            ####### INITIATE CONTINUOUS MOTION SENSING #######
+            stillRunning = True
+
+
 
             with open(args.l, 'a') as log:
                 print("Closing socket", file=log)
