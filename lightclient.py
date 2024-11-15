@@ -59,9 +59,9 @@ if __name__ == '__main__':
         s.connect((args.s, args.p))
         with open(args.l, 'a') as log:
 
-        A = 'N'
-        S = 'N'
-        F = 'N'
+            A = 'N'
+            S = 'N'
+            F = 'N'
             while ((A != 'Y') && (S != 'Y') && (F != 'N')):
                 # Send the SYN packet
                 seqNum = sequenceNumber = random.randint(0, 2147483647)                                             #CHANGED v
