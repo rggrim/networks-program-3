@@ -63,7 +63,7 @@ if __name__ == '__main__':
             S = 'N'
             F = 'N'
             while ((A != 'Y') && (S != 'Y') && (F != 'N')):
-                # Send the SYN packet
+                ####### SENDING SYN PACKET ##########
                 seqNum = sequenceNumber = random.randint(0, 2147483647)                                             #CHANGED v
                 ackNum = 0
                 ack = 'N'
@@ -73,9 +73,9 @@ if __name__ == '__main__':
                 print(f"Sending SYN Packet to server", file=log)
                 response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
     
-                #Get Response SYN-ACK                                                                                #changed; instead of going to send_packet function,
+                ##### RECEIVING SYN-ACK ######                                                                        #changed; instead of going to send_packet function,
                 server_packet = s.recv(struct.calcsize('!IIcccI'))                                                    #just handle sending and receiving in main 
-                recvdSeqNum, recvdAckNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)                                #for the syn-ack process
+                recvdSeqNum, recvdAckNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)                #for the syn-ack process
                 server_message = s.recv(lenPayload)
                 message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
 
