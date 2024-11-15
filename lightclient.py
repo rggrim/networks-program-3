@@ -6,7 +6,7 @@ import random
 
 # Creates the packet
 def create_packet(sequenceNum, ackNum, A, S, F, payload):                                                          #CHANGED 
-    header = struct.pack('!IIccc', sequenceNum, ackNum, A, S, F)  # variable length for string         #NEEDS TO BE CHANGED
+    header = struct.pack('!IIcccI', sequenceNum, ackNum, A, S, F, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
     packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
     return packet
 
@@ -17,8 +17,8 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload):                      
     s.sendall(packet) # Send the packet to the server
 
     # Receive the response header from the server
-    server_packet = s.recv(struct.calcsize('!IIccc'))
-    sequenceNum, ackNum, A, S, F = struct.unpack('!IIccc', server_packet)
+    server_packet = s.recv(struct.calcsize('!IIcccI'))
+    sequenceNum, ackNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)
 
     with open(logfile, 'a') as log:
         print(f"Received Data: sequenceNum: {sequenceNum} ackNum: {ackNum} A: {A} S: {S} F: {F}", file=log)
@@ -31,43 +31,8 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload):                      
             print(f"VERSION MISMATCH", file=log)
         valid = False
     # Receive the message from the server
-    server_message = s.recv(message_len)
-    message = struct.unpack(f'!{message_len}s', server_message)[0].decode('utf-8')
-    # Log the message from the server
-    with open(logfile, 'a') as log:
-        print(f"Received Message {message}", file=log)
-    if message == "SUCCESS":
-        with open(logfile, 'a') as log:
-            print(f"Command Successful", file=log)
-
-    return message, valid
-
-
-
-
-    # Sends and Receives the packet from the server
-def send_ACK_SYN(s, sequenceNum, ackNum, A, S, F, payload):                                                         #CHANGED
-    valid = True
-    packet = create_packet(sequenceNum, ackNum, A, S, F, payload)                                                  #CHANGED
-    s.sendall(packet) # Send the packet to the server
-
-    # Receive the response header from the server
-    server_packet = s.recv(struct.calcsize('!IIccc'))
-    sequenceNum, ackNum, A, S, F = struct.unpack('!IIccc', server_packet)
-
-    with open(logfile, 'a') as log:
-        print(f"Received Data: sequenceNum: {sequenceNum} ackNum: {ackNum} A: {A} S: {S} F: {F}", file=log)
-    if ver == 17: # If version is 17, accept                                                                    ##NEEDS TO BE CHANGED; WE NO LONGER NEED TO WORRY 
-                                                                                                                ##ABOUT VERSION NUMBER
-        with open(logfile, 'a') as log:
-            print(f"VERSION ACCEPTED", file=log)
-    else: # Else, log the mismatch
-        with open(logfile, 'a') as log:
-            print(f"VERSION MISMATCH", file=log)
-        valid = False
-    # Receive the message from the server
-    server_message = s.recv(message_len)
-    message = struct.unpack(f'!{message_len}s', server_message)[0].decode('utf-8')
+    server_message = s.recv(lenPayload)
+    message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
     # Log the message from the server
     with open(logfile, 'a') as log:
         print(f"Received Message {message}", file=log)
@@ -104,9 +69,9 @@ if __name__ == '__main__':
 
             #Get Response SYN-ACK                                                                                #changed; instead of going to send_packet function,
             server_packet = s.recv(struct.calcsize('!IIccc'))                                                    #just handle sending and receiving in main 
-            sequenceNum, ackNum, A, S, F = struct.unpack('!IIccc', server_packet)                                #for the syn-ack process
-            server_message = s.recv(message_len)
-            message = struct.unpack(f'!{message_len}s', server_message)[0].decode('utf-8')
+            sequenceNum, ackNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)                                #for the syn-ack process
+            server_message = s.recv(lenPayload)
+            message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
 
             
              # Send the ACK packet
