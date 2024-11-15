@@ -5,8 +5,8 @@ import struct
 import random
 
 # Creates the packet
-def create_packet(version, message_type, payload):
-    header = struct.pack('!III', version, message_type, len(payload))  # variable length for string
+def create_packet(sequenceNum, ackNum, A, S, F, payload):                                                          #CHANGED 
+    header = struct.pack('!IIccc', sequenceNum, ackNum, A, S, F)  # variable length for string         #NEEDS TO BE CHANGED
     packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
     return packet
 
@@ -17,12 +17,13 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload):                      
     s.sendall(packet) # Send the packet to the server
 
     # Receive the response header from the server
-    server_packet = s.recv(struct.calcsize('!III'))
-    ver, message_type, message_len = struct.unpack('!III', server_packet)
+    server_packet = s.recv(struct.calcsize('!IIccc'))
+    sequenceNum, ackNum, A, S, F = struct.unpack('!IIccc', server_packet)
 
     with open(logfile, 'a') as log:
-        print(f"Received Data: version: {ver} message_type: {message_type} length: {message_len}", file=log)
-    if ver == 17: # If version is 17, accept
+        print(f"Received Data: sequenceNum: {sequenceNum} ackNum: {ackNum} A: {A} S: {S} F: {F}", file=log)
+    if ver == 17: # If version is 17, accept                                                                    ##NEEDS TO BE CHANGED; WE NO LONGER NEED TO WORRY 
+                                                                                                                ##ABOUT VERSION NUMBER
         with open(logfile, 'a') as log:
             print(f"VERSION ACCEPTED", file=log)
     else: # Else, log the mismatch
@@ -53,9 +54,29 @@ if __name__ == '__main__':
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((args.s, args.p))
         with open(args.l, 'a') as log:
-            print(f"Sending SYN Packet", file=log)
+            
             # Send the SYN packet
-            response, is_accepted = send_packet(s, 0, "HELLO", args.l)
+            seqNum = 12345                                                                                    #CHANGED v
+            ackNum = 0
+            ack = 'N'
+            syn = 'Y'
+            fin = 'N'
+            payload = ''
+            print(f"Sending SYN Packet", file=log)
+            response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+
+             # Send the ACK packet
+            seqNum = recvdAckNum                                                                                #CHANGED v
+            ackNum = recvdSeqNum + len(recv
+            ack = 'N'
+            syn = 'Y'
+            fin = 'N'
+            payload = ''
+            print(f"Sending SYN Packet", file=log)
+            response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+
+
+            
             if is_accepted:
 
                 # Send the LIGHTON and LIGHTOFF commands
