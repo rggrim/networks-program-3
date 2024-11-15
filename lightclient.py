@@ -12,7 +12,7 @@ def create_packet(sequenceNum, ackNum, A, S, F, payload):                       
 
 # Sends and Receives the packet from the server
 def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):                                                         #CHANGED
-    valid = True
+    #valid = True                                                                                                   #DO WE NEED VALID ANYMORE?
     packet = create_packet(sequenceNum, ackNum, A, S, F, payload)                                                  #CHANGED
     s.sendall(packet) # Send the packet to the server
 
