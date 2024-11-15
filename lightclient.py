@@ -22,16 +22,6 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):             
     with open(logfile, 'a') as log:
         print(f"Received Data: sequenceNum: {sequenceNum} ackNum: {ackNum} A: {A} S: {S} F: {F}", file=log)
 
-#            if ver == 17: # If version is 17, accept                                                                    ##NEEDS TO BE CHANGED; WE NO LONGER NEED TO WORRY 
-#                                                                                                                        ##ABOUT VERSION NUMBER
-#                with open(logfile, 'a') as log:
-#                    print(f"VERSION ACCEPTED", file=log)
-#            else: # Else, log the mismatch
-#                with open(logfile, 'a') as log:
-#                    print(f"VERSION MISMATCH", file=log)
-#                valid = False
-
-    # Receive the message from the server
     server_message = s.recv(lenPayload)
     message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
     # Log the message from the server
@@ -96,11 +86,11 @@ if __name__ == '__main__':
 
             while stillRunning:
                 seqNum = recvdAckNum                                                                                #CHANGED v
-                ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
+                ackNum = recvdSeqNum + 1 + lenPayload
                 ack = 'Y'
                 syn = 'N'
                 fin = 'N'
-                payload = ''                                                #NEED TO CREAT NUM BLINKS AND DRUATION PAYLOAF
+                payload = '72'
                 print(f"sending number of blinks and duration to server", file=log)
                 response = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
@@ -108,3 +98,19 @@ if __name__ == '__main__':
 
             with open(args.l, 'a') as log:
                 print("Closing socket", file=log)
+
+
+
+
+
+
+#            if ver == 17: # If version is 17, accept                                                                    ##NEEDS TO BE CHANGED; WE NO LONGER NEED TO WORRY 
+#                                                                                                                        ##ABOUT VERSION NUMBER
+#                with open(logfile, 'a') as log:
+#                    print(f"VERSION ACCEPTED", file=log)
+#            else: # Else, log the mismatch
+#                with open(logfile, 'a') as log:
+#                    print(f"VERSION MISMATCH", file=log)
+#                valid = False
+
+    # Receive the message from the server
