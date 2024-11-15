@@ -68,21 +68,24 @@ if __name__ == '__main__':
             response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
             #Get Response SYN-ACK                                                                                #changed; instead of going to send_packet function,
-            server_packet = s.recv(struct.calcsize('!IIccc'))                                                    #just handle sending and receiving in main 
-            sequenceNum, ackNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)                                #for the syn-ack process
+            server_packet = s.recv(struct.calcsize('!IIcccI'))                                                    #just handle sending and receiving in main 
+            recvdSeqNum, recvdAckNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)                                #for the syn-ack process
             server_message = s.recv(lenPayload)
             message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
 
-            
-             # Send the ACK packet
-            seqNum = recvdAckNum                                                                                #CHANGED v
-            ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
-            ack = 'Y'
-            syn = 'N'
-            fin = 'N'
-            payload = ''
-            print(f"Sending ACK Packet to server", file=log)
-            response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+            if (A == 'Y') && (S == 'Y') && (F == 'N'):
+                 # Send the ACK packet
+                seqNum = recvdAckNum                                                                                #CHANGED v
+                ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
+                ack = 'Y'
+                syn = 'N'
+                fin = 'N'
+                payload = ''
+                print(f"Sending ACK Packet to server", file=log)
+                response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+
+            else:
+                #loop back to send initial ACK
 
 
             
