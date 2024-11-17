@@ -60,7 +60,13 @@ if __name__ == '__main__':
                     print(f"Received connection from <{addr[0]}, {args.p}>", {timestamp}, file=log)
                 
                 #***************************RECEIVE SYN PACKET*******************************#
-
+                while True:
+                    try:
+                        payload_string, message_type = unpack_packet(conn, header_format, args.l)
+                        pass
+                    except:
+                        print("Connection closed or an error occurred")
+                        break
 
 
                 #***************************SEND SYN-ACK PACKET*******************************#

@@ -85,34 +85,32 @@ if __name__ == '__main__':
 
             while ((A != 'Y') & (S != 'Y') & (F != 'N')):
                 #*****************SENDING SYN PACKET*****************#
-                seqNum = random.randint(0, 2147483600)                                             #CHANGED v
+                seqNum = random.randint(0, 2147483600)
                 ackNum = 0
                 ack = 'N'
                 syn = 'Y'
                 fin = 'N'
                 payload = ''
-                print(f"Sending SYN Packet to server", file=log)
-                #response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
-                header = struct.pack('!IIcccI', seqNum, ackNum, ack, syn, fin, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
+                header = struct.pack('!IIcccI', seqNum, ackNum, ack, syn, fin, len(payload))                                    #NEED TO MANUALLY ADD LOG ENTRY
                 packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
                 s.sendall(packet) # Send the packet to the server
     
-                #*******************RECEIVING SYN-ACK*********************#                                                                        #changed; instead of going to send_packet function,
-                server_packet = s.recv(struct.calcsize('!IIcccI'))                                                    #just handle sending and receiving in main 
-                recvdSeqNum, recvdAckNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)                #for the syn-ack process
+                #*******************RECEIVING SYN-ACK*********************#                                     #changed; instead of going to send_packet function,
+                server_packet = s.recv(struct.calcsize('!IIcccI'))                                              #just handle sending and receiving in main 
+                recvdSeqNum, recvdAckNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)         #for the syn-ack process
                 server_message = s.recv(lenPayload)
-                message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
+                message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')                                  #NEED TO MANUALLY ADD LOG ENTRY
 
 
             #***********************SENDING ACK PACKET**********************#
-            seqNum = recvdAckNum                                                                                #CHANGED v
-            ackNum = recvdSeqNum + 1                #since payload should be blank, adding it would only add 0 anyway
+            seqNum = recvdAckNum 
+            ackNum = recvdSeqNum + 1                
             ack = 'Y'
             syn = 'N'
             fin = 'N'
-            payload = ''
-            print(f"Sending ACK Packet to server", file=log)
-            response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+            payload = ''                                                                                                        #NEED TO MANUALLY ADD LOG ENTRY
+            #print(f"Sending ACK Packet to server", file=log)
+            response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload, args.l)
 
 
             #********************INITIATE CONTINUOUS MOTION SENSING******************#
@@ -121,14 +119,13 @@ if __name__ == '__main__':
             while stillRunning:
 
                 #************************SEND BLINKS AND DURATION********************#
-                seqNum = recvdAckNum                                                                                #CHANGED v
+                seqNum = recvdAckNum
                 ackNum = recvdSeqNum + 1 + lenPayload
                 ack = 'Y'
                 syn = 'N'
                 fin = 'N'
                 payload = '44'
-                #print(f"sending number of blinks and duration to server", file=log)
-                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload, args.l)
 
                 #*************************START MOTION SENSOR*************************#
                 pir = MotionSensor(PIR_PIN)
@@ -142,26 +139,25 @@ if __name__ == '__main__':
                 print(f"{timestamp} :MotionDetected", file=log)
 
                 #********************ALERT SERVER MOTION DETECTED**********************#
-                seqNum = recvdAckNum                                                                                #CHANGED v
+                seqNum = recvdAckNum
                 ackNum = recvdSeqNum + 1 + lenPayload
                 ack = 'Y'
                 syn = 'N'
                 fin = 'N'
                 payload = ':MotionDetected'
-                #print(f"Telling server motion detected", file=log)
-                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload, args.l)
 
                 #pir.wait_for_no_motion()
 
                 #**************************CLOSE CONNECTION***************************#
-                seqNum = recvdAckNum                                                                                #CHANGED v
+                seqNum = recvdAckNum
                 ackNum = recvdSeqNum + 1 + lenPayload
                 ack = 'N'
                 syn = 'N'
                 fin = 'Y'
                 payload = ''
-                print(f"Sending fin flag to end connection", file=log)
-                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+                #print(f"Sending fin flag to end connection", file=log)
+                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload, args.l)
 
 
 
