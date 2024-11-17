@@ -3,6 +3,7 @@ import argparse
 import socket
 import struct
 import random
+from gpiozero import MotionSensor
 
 # Creates the packet
 def create_packet(sequenceNum, ackNum, A, S, F, payload):                                                          #CHANGED 
@@ -88,6 +89,8 @@ if __name__ == '__main__':
             stillRunning = True
 
             while stillRunning:
+
+                #************************SEND BLINKS AND DURATION********************#
                 seqNum = recvdAckNum                                                                                #CHANGED v
                 ackNum = recvdSeqNum + 1 + lenPayload
                 ack = 'Y'
@@ -97,13 +100,31 @@ if __name__ == '__main__':
                 print(f"sending number of blinks and duration to server", file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
+                #*************************START MOTION SENSOR*************************#
+                pir = MotionSensor(4)
+                pir.wait_for_motion()
+                print("You moved")
+
+                #********************ALERT SERVER MOTION DETECTED**********************#
                 seqNum = recvdAckNum                                                                                #CHANGED v
                 ackNum = recvdSeqNum + 1 + lenPayload
                 ack = 'Y'
                 syn = 'N'
                 fin = 'N'
-                payload = 'Motion Detected'
+                payload = ':MotionDetected'
                 print(f"Telling server motion detected", file=log)
+                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+
+                #pir.wait_for_no_motion()
+
+                #**************************CLOSE CONNECTION***************************#
+                seqNum = recvdAckNum                                                                                #CHANGED v
+                ackNum = recvdSeqNum + 1 + lenPayload
+                ack = 'N'
+                syn = 'N'
+                fin = 'Y'
+                payload = ''
+                print(f"Sending fin flag to end connection", file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
 
