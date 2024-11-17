@@ -128,7 +128,10 @@ if __name__ == '__main__':
                 blinks = digits[0]
                 duration = digits[1]
                 #***************************ACKNOWLEDGE MOTION SENSING RECEPTION*********************# 
-
+                ackNum = recvdSequenceNum + 1 
+                header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
+                response_packet = header + "{payload}".encode('utf-8')
+                conn.sendall(response_packet)
 
 
 
