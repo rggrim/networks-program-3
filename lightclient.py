@@ -59,12 +59,6 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):             
 
     server_message = s.recv(lenPayload)
     message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
-    # Log the message from the server
-    with open(logfile, 'a') as log:
-        print(f"Received Message {message}", file=log)
-    if message == "SUCCESS":
-        with open(logfile, 'a') as log:
-            print(f"Command Successful", file=log)
 
     return message, sequenceNum, ackNum, A, S, F, lenPayload
 
@@ -132,7 +126,7 @@ if __name__ == '__main__':
                 ack = 'Y'
                 syn = 'N'
                 fin = 'N'
-                payload = '72'
+                payload = '44'
                 #print(f"sending number of blinks and duration to server", file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
