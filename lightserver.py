@@ -14,8 +14,11 @@ def unpack_packet(conn, header_format, logfile):
     #********************************UNPACK CLIENT'S HEADER********************************#
     recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
 
+    dt = datetime.now()
+    date_time = datetime.timestamp(dt)
+    timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
     with open(logfile, 'a') as log:                                     # Log the header information                      #ADD TIMESTAMP/LOG
-        print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", file=log)
+        print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
 
 
     #******************************RECEIVE PAYLOAD FROM CLIENT*************************#
@@ -51,7 +54,10 @@ if __name__ == '__main__':
 
             with conn:
                 with open(args.l, 'a') as log: # Log the connection                                                 #NOT SURE WE NEED THIS ANYMORE                                  #ADD TIMESTAMP
-                    print(f"Received connection from <{addr[0]}, {args.p}>", file=log)
+                    dt = datetime.now()
+                    date_time = datetime.timestamp(dt)
+                    timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                    print(f"Received connection from <{addr[0]}, {args.p}>", {timestamp}, file=log)
                 
                 while True:
                     try:
@@ -71,7 +77,10 @@ if __name__ == '__main__':
                         # If the command is valid, execute the command
                         if payload_string in ["LIGHTON", "LIGHTOFF"]:
                             with open(args.l, 'a') as log:
-                                print(f"EXECUTING SUPPORTED COMMAND: {payload_string}", file=log)
+                                dt = datetime.now()
+                                date_time = datetime.timestamp(dt)
+                                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                                print(f"EXECUTING SUPPORTED COMMAND: {payload_string}", {timestamp}, file=log)
                             if payload_string == "LIGHTON":
                                 LightOn() # Turn on the light
                             else:
@@ -80,12 +89,18 @@ if __name__ == '__main__':
                             response_packet = header + "SUCCESS".encode('utf-8')
                         else:
                             with open(args.l, 'a') as log:
-                                print(f"IGNORING UNKNOWN COMMAND: {payload_string}", file=log)
+                                dt = datetime.now()
+                                date_time = datetime.timestamp(dt)
+                                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                                print(f"IGNORING UNKNOWN COMMAND: {payload_string}", {timestamp}, file=log)
                     else:
                         break # close connection because version mismatched
 
                     with open(args.l, 'a') as log:
-                        print(f"RETURNING SUCCESS", file=log)
+                        dt = datetime.now()
+                        date_time = datetime.timestamp(dt)
+                        timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                        print(f"RETURNING SUCCESS", {timestamp}, file=log)
                     # Send the response packet to the client
                     conn.sendall(response_packet)
 
