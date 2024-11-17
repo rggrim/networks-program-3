@@ -14,6 +14,10 @@ def create_packet(sequenceNum, ackNum, A, S, F, payload):                       
 
 # Sends and Receives the packet from the server
 def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):                                                         #CHANGED
+    
+    
+    #"RECV" <Sequence Number> <Acknowledgement Number> ["ACK"] ["SYN"] ["FIN"]
+    #"SEND" <Sequence Number> <Acknowledgement Number> ["ACK"] ["SYN"] ["FIN"]
     packet = create_packet(sequenceNum, ackNum, A, S, F, payload)                                                  #CHANGED
     s.sendall(packet) # Send the packet to the server
 
@@ -118,8 +122,8 @@ if __name__ == '__main__':
                 ack = 'Y'
                 syn = 'N'
                 fin = 'N'
-                payload = 'MotionDetected'
-                print(f"Telling server motion detected", file=log)
+                payload = ':MotionDetected'
+                #print(f"Telling server motion detected", file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
                 #pir.wait_for_no_motion()
