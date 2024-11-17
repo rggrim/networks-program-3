@@ -99,7 +99,11 @@ if __name__ == '__main__':
                 #***************************SEND SYN-ACK PACKET*******************************#
 
 
-
+                #Logging packet sending
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                print(f"\"SEND\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
                 #***************************RECEIVE ACK PACKET*******************************#
 
 
