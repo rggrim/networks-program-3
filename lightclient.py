@@ -123,7 +123,7 @@ if __name__ == '__main__':
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
                 #*************************START MOTION SENSOR*************************#
-                pir = MotionSensor(4)
+                pir = MotionSensor(PIR_PIN)
                 pir.wait_for_motion()
                 print("You moved")
 
