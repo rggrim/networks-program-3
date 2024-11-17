@@ -60,27 +60,25 @@ if __name__ == '__main__':
                         print("Connection closed or an error occurred")
                         break
 
-                    if message_type == 0: # If the message type is 0, send the HELLO response
-                        header = struct.pack(header_format, 17, 0, len("HELLO"))
-                        response_packet = header + "HELLO".encode('utf-8')
+                    #if message_type == 0: # If the message type is 0, send the HELLO response
+                    #    header = struct.pack(header_format, 17, 0, len("HELLO"))
+                    #    response_packet = header + "HELLO".encode('utf-8')
 
-                    # If the message type is 1 or 2, check if the payload is LIGHTON or LIGHTOFF
-                    elif message_type in [1, 2]:
-                        # If the command is valid, execute the command
-                        if payload_string in ["LIGHTON", "LIGHTOFF"]:
-                            with open(args.l, 'a') as log:
-                                print(f"EXECUTING SUPPORTED COMMAND: {payload_string}", file=log)
-                            if payload_string == "LIGHTON":
-                                LightOn() # Turn on the light
-                            else:
-                                LightOff() # Turn off the light
-                            header = struct.pack(header_format, 17, 1, len("SUCCESS"))
-                            response_packet = header + "SUCCESS".encode('utf-8')
+
+                    # If the command is valid, execute the command
+                    if payload_string in ["LIGHTON", "LIGHTOFF"]:
+                        with open(args.l, 'a') as log:
+                            print(f"EXECUTING SUPPORTED COMMAND: {payload_string}", file=log)
+                        if payload_string == "LIGHTON":
+                            LightOn() # Turn on the light
                         else:
-                            with open(args.l, 'a') as log:
-                                print(f"IGNORING UNKNOWN COMMAND: {payload_string}", file=log)
+                            LightOff() # Turn off the light
+                        header = struct.pack(header_format, 17, 1, len("SUCCESS"))
+                        response_packet = header + "SUCCESS".encode('utf-8')
                     else:
-                        break # close connection because version mismatched
+                        with open(args.l, 'a') as log:
+                            print(f"IGNORING UNKNOWN COMMAND: {payload_string}", file=log)
+                    
 
                     with open(args.l, 'a') as log:
                         print(f"RETURNING SUCCESS", file=log)
