@@ -12,21 +12,18 @@ def unpack_packet(conn, header_format, logfile):
     # Unpack the header from the client's packet
     recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
 
-    with open(logfile, 'a') as log: # Log the header information
+    with open(logfile, 'a') as log: # Log the header information                                                              #ADD TIMESTAMP/LOG
         print(f"Received Data: version: {ver} message_type: {message_type} length: {message_len}", file=log)
 
-    if ver == 17:
-        with open(logfile, 'a') as log:
-            print(f"VERSION ACCEPTED", file=log)
-        client_packet = conn.recv(message_len)  # Receive the payload from the client
+    
+    with open(logfile, 'a') as log:
+        print(f"VERSION ACCEPTED", file=log)
+    client_packet = conn.recv(message_len)  # Receive the payload from the client
 
-        payload = struct.unpack(f'{message_len}s', client_packet)
+    payload = struct.unpack(f'{message_len}s', client_packet)
 
-        return payload[0].decode('utf-8'), message_type
-    else: # Version is mismatched and don't receive the payload
-        with open(logfile, 'a') as log:
-            print(f"VERSION MISMATCH", file=log)
-        return None, message_type
+    return payload[0].decode('utf-8'), message_type
+
 
 def LightOn():
     print("Light is on")
@@ -91,3 +88,20 @@ if __name__ == '__main__':
                         print(f"RETURNING SUCCESS", file=log)
                     # Send the response packet to the client
                     conn.sendall(response_packet)
+
+
+
+
+###########################OLD VERSION CODE#########################
+#    if ver == 17:
+#        with open(logfile, 'a') as log:
+#            print(f"VERSION ACCEPTED", file=log)
+#        client_packet = conn.recv(message_len)  # Receive the payload from the client
+#
+#        payload = struct.unpack(f'{message_len}s', client_packet)
+#
+#        return payload[0].decode('utf-8'), message_type
+#    else: # Version is mismatched and don't receive the payload
+#        with open(logfile, 'a') as log:
+#            print(f"VERSION MISMATCH", file=log)
+#        return None, message_type
