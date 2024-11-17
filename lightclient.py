@@ -44,7 +44,7 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):             
     dt = datetime.now()
     date_time = datetime.timestamp(dt)
     timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
-    print(f"Sent Data: sequenceNum: {sequenceNum} ackNum: {ackNum} A: {A} S: {S} F: {F}", {timestamp}, file=logfile)
+    print(f"\"SEND\": <{sequenceNum}> <{ackNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=logfile)
 
     # Receive the response header from the server
     server_packet = s.recv(struct.calcsize('!IIcccI'))
@@ -55,7 +55,7 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):             
     date_time = datetime.timestamp(dt)
     timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
     with open(logfile, 'a') as log:
-        print(f"Received Data: sequenceNum: {sequenceNum} ackNum: {ackNum} A: {A} S: {S} F: {F}", {timestamp}, file=logfile)
+        print(f"\"RECV\": <{sequenceNum}> <{ackNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=logfile)
 
     server_message = s.recv(lenPayload)
     message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')
