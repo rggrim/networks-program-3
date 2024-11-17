@@ -13,9 +13,10 @@ def unpack_packet(conn, header_format, logfile):
     recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
 
     with open(logfile, 'a') as log: # Log the header information                                                              #ADD TIMESTAMP/LOG
-        print(f"Received Data: version: {ver} message_type: {message_type} length: {message_len}", file=log)
+        print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", file=log)
 
-    
+    #"RECV" <Sequence Number> <Acknowledgement Number> ["ACK"] ["SYN"] ["FIN"]
+    #"SEND" <Sequence Number> <Acknowledgement Number> ["ACK"] ["SYN"] ["FIN"]
     with open(logfile, 'a') as log:
         print(f"VERSION ACCEPTED", file=log)
     client_packet = conn.recv(message_len)  # Receive the payload from the client
