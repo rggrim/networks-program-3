@@ -4,6 +4,7 @@ import socket
 import struct
 import random
 from gpiozero import MotionSensor
+from datetime import datetime
 
 # Creates the packet
 def create_packet(sequenceNum, ackNum, A, S, F, payload):                                                          #CHANGED 
@@ -97,7 +98,7 @@ if __name__ == '__main__':
                 syn = 'N'
                 fin = 'N'
                 payload = '72'
-                print(f"sending number of blinks and duration to server", file=log)
+                #print(f"sending number of blinks and duration to server", file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
                 #*************************START MOTION SENSOR*************************#
@@ -105,13 +106,19 @@ if __name__ == '__main__':
                 pir.wait_for_motion()
                 print("You moved")
 
+                #need to log motion detected.
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                print(f"{timestamp} :MotionDetected", file=log)
+
                 #********************ALERT SERVER MOTION DETECTED**********************#
                 seqNum = recvdAckNum                                                                                #CHANGED v
                 ackNum = recvdSeqNum + 1 + lenPayload
                 ack = 'Y'
                 syn = 'N'
                 fin = 'N'
-                payload = ':MotionDetected'
+                payload = 'MotionDetected'
                 print(f"Telling server motion detected", file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
