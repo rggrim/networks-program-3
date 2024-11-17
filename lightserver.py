@@ -76,8 +76,11 @@ if __name__ == '__main__':
                     elif message_type in [1, 2]:
                         # If the command is valid, execute the command
                         if payload_string in ["LIGHTON", "LIGHTOFF"]:
+                            dt = datetime.now()
+                            date_time = datetime.timestamp(dt)
+                            timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
                             with open(args.l, 'a') as log:
-                                print(f"EXECUTING SUPPORTED COMMAND: {payload_string}", file=log)
+                                print(f"EXECUTING SUPPORTED COMMAND: {payload_string}", {timestamp}, file=log)
                             if payload_string == "LIGHTON":
                                 LightOn() # Turn on the light
                             else:
@@ -85,8 +88,11 @@ if __name__ == '__main__':
                             header = struct.pack(header_format, 17, 1, len("SUCCESS"))
                             response_packet = header + "SUCCESS".encode('utf-8')
                         else:
+                            dt = datetime.now()
+                            date_time = datetime.timestamp(dt)
+                            timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
                             with open(args.l, 'a') as log:
-                                print(f"IGNORING UNKNOWN COMMAND: {payload_string}", file=log)
+                                print(f"IGNORING UNKNOWN COMMAND: {payload_string}", {timestamp}, file=log)
                     else:
                         break # close connection because version mismatched
 
