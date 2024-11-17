@@ -15,7 +15,6 @@ def create_packet(sequenceNum, ackNum, A, S, F, payload):                       
 # Sends and Receives the packet from the server
 def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):                                                         #CHANGED
     
-    
     #"RECV" <Sequence Number> <Acknowledgement Number> ["ACK"] ["SYN"] ["FIN"]
     #"SEND" <Sequence Number> <Acknowledgement Number> ["ACK"] ["SYN"] ["FIN"]
     packet = create_packet(sequenceNum, ackNum, A, S, F, payload)                                                  #CHANGED
@@ -42,6 +41,8 @@ def send_packet(s, sequenceNum, ackNum, A, S, F, payload, logfile):             
 
 
 if __name__ == '__main__':
+
+    #**************************ACCEPT ARGS***************************#
     parser = argparse.ArgumentParser(description="Client for packet creation and sending.")
     parser.add_argument('-s', type=str, required=True, help='Server IP address')
     parser.add_argument('-p', type=int, required=True, help='Server port')
@@ -49,7 +50,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # connect to the server
+    #************************CONNECT TO SERVER**********************#
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((args.s, args.p))
         with open(args.l, 'a') as log:
@@ -60,7 +61,7 @@ if __name__ == '__main__':
 
             while ((A != 'Y') & (S != 'Y') & (F != 'N')):
                 #*****************SENDING SYN PACKET*****************#
-                seqNum = random.randint(0, 2147483647)                                             #CHANGED v
+                seqNum = random.randint(0, 2147483600)                                             #CHANGED v
                 ackNum = 0
                 ack = 'N'
                 syn = 'Y'
