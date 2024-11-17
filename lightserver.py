@@ -5,8 +5,22 @@ import argparse
 import random
 from datetime import datetime
 from gpiozero import LED # type: ignore
+import time
 
 led = LED(17)
+
+def LightOn():
+    led.on()
+
+def LightOff():
+    led.off()
+
+def blink_led(blinks, duration):
+    for _ in range(blinks):
+        LightOn()
+        time.sleep(duration / blinks)
+        LightOff()
+        time.sleep(duration / blinks)
  
 def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
@@ -27,12 +41,6 @@ def unpack_packet(conn, header_format, logfile):
 
     return payload[0].decode('utf-8')
 
-
-def LightOn():
-    led.on()
-
-def LightOff():
-    led.off()
 
 if __name__ == '__main__':
 
