@@ -9,21 +9,18 @@ from datetime import datetime
 def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
 
-    # Unpack the header from the client's packet
+    #********************************UNPACK CLIENT'S HEADER********************************#
     recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
 
-    with open(logfile, 'a') as log: # Log the header information                                                              #ADD TIMESTAMP/LOG
+    with open(logfile, 'a') as log:                                     # Log the header information                      #ADD TIMESTAMP/LOG
         print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", file=log)
 
-    #"RECV" <Sequence Number> <Acknowledgement Number> ["ACK"] ["SYN"] ["FIN"]
-    #"SEND" <Sequence Number> <Acknowledgement Number> ["ACK"] ["SYN"] ["FIN"]
-    with open(logfile, 'a') as log:
-        print(f"VERSION ACCEPTED", file=log)
-    client_packet = conn.recv(message_len)  # Receive the payload from the client
 
-    payload = struct.unpack(f'{message_len}s', client_packet)
+    #******************************RECEIVE PAYLOAD FROM CLIENT*************************#
+    client_packet = conn.recv(payloadLen)
+    payload = struct.unpack(f'{payloadLen}s', client_packet)
 
-    return payload[0].decode('utf-8'), message_type
+    return payload[0].decode('utf-8')
 
 
 def LightOn():
@@ -51,7 +48,7 @@ if __name__ == '__main__':
             conn, addr = s.accept()     # Accept the connection
 
             with conn:
-                with open(args.l, 'a') as log: # Log the connection                                                     #ADD TIMESTAMP
+                with open(args.l, 'a') as log: # Log the connection                                                 #NOT SURE WE NEED THIS ANYMORE                                  #ADD TIMESTAMP
                     print(f"Received connection from <{addr[0]}, {args.p}>", file=log)
                 
                 while True:
