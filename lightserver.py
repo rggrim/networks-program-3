@@ -2,6 +2,8 @@
 import socket
 import struct
 import argparse
+import random
+from datetime import datetime
 
 def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
@@ -40,15 +42,15 @@ def LightOff():
     print("Light is off")
 
 if __name__ == '__main__':
+
+    #***************************PARSE ARGUMENTS***************************#
     parser = argparse.ArgumentParser(description="Server for turning on an LED.")
     parser.add_argument('-p', type=int, required=True, help='Port to listen on')
     parser.add_argument('-l', type=str, required=True, help='Log file')
     args = parser.parse_args()
-    host = 'localhost' # Server's IP address: change to your machine's IP
-    port = args.p # Port to listen on
-
-    # Header Format: Version (4 bytes), Message Type (4 bytes), Message Length (4 bytes)
-    header_format = '!III'  # Specify the header format using "struct"
+    host = 'localhost'                  # Server's IP address: change to your machine's IP
+    port = args.p                       # Port to listen on
+    header_format = '!IIcccI'           # Specify the header format using "struct"
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((host, port))
