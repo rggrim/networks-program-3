@@ -4,7 +4,9 @@ import struct
 import argparse
 import random
 from datetime import datetime
+from gpiozero import LED # type: ignore
 
+led = LED(17)
  
 def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
