@@ -71,8 +71,10 @@ if __name__ == '__main__':
                 A = 'N'
                 S = 'N'
                 F = 'N'
-
+                
                 while  ((A != 'N') & (S != 'Y') & (F != 'N')):
+                    seqNum = random.randint(0, 2147483600)
+
                     try:
                         client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
                         recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
@@ -87,8 +89,9 @@ if __name__ == '__main__':
                         payload = struct.unpack(f'{payloadLen}s', client_packet)
 
                         if S == 'N':
-                            header = struct.pack(header_format, 17, 0, len("HELLO"))
-                            response_packet = header + "HELLO".encode('utf-8')
+                            ackNum = recvdSequenceNum + 1 
+                            header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
+                            response_packet = header + "".encode('utf-8')
                             conn.sendall(response_packet)
                         pass
                     except:
