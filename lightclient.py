@@ -5,16 +5,30 @@ import struct
 import random
 from gpiozero import MotionSensor
 from datetime import datetime
-import RPi.GPIO as GPIO # type: ignore
 
 # allows control of the GPIO pins on the Raspberry Pi
 PIR_PIN = 4
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIR_PIN, GPIO.IN)
 
 # Creates the packet
 def create_packet(sequenceNum, ackNum, A, S, F, payload):                                                          #CHANGED 
-    header = struct.pack('!IIcccI', sequenceNum, ackNum, A, S, F, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
+    #header = struct.pack('!IIcccI', sequenceNum, ackNum, A, S, F, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
+    
+    #packing the sequence number (32 bits) and acknowledgement number (32 bits)
+    header += struct.pack('!I', sequenceNum)
+    header += struct.pack('!I', ackNum)
+
+    #packing the "Not Used" section with 3 bytes (29 bits) of 0's
+    header += struct.pack('!I', 0)[:3]
+
+    #packing each flag (one byte each)
+    header += struct.pack("!c", A)
+    header += struct.pack("!c", S)
+    header += struct.pack("!c", F)
+
+    #packing the length of the payload
+    header += struct.pack("!c", len(payload))
+
+    #packing the payload
     packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
     return packet
 
