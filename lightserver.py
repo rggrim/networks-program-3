@@ -29,10 +29,10 @@ def unpack_packet(conn, header_format, logfile):
 
 
 def LightOn():
-    print("Light is on")
+    led.on()
 
 def LightOff():
-    print("Light is off")
+    led.off()
 
 if __name__ == '__main__':
 
