@@ -72,7 +72,7 @@ if __name__ == '__main__':
                 S = 'N'
                 F = 'N'
 
-                while  ((A != 'Y') & (S != 'N') & (F != 'N')):
+                while  ((A != 'N') & (S != 'Y') & (F != 'N')):
                     try:
                         client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
                         recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
@@ -86,7 +86,10 @@ if __name__ == '__main__':
                         client_packet = conn.recv(payloadLen)
                         payload = struct.unpack(f'{payloadLen}s', client_packet)
 
-
+                        if S == 'N':
+                            header = struct.pack(header_format, 17, 0, len("HELLO"))
+                            response_packet = header + "HELLO".encode('utf-8')
+                            conn.sendall(response_packet)
                         pass
                     except:
                         print("Connection closed or an error occurred")
