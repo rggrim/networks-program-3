@@ -99,13 +99,24 @@ if __name__ == '__main__':
                 header = struct.pack('!IIcccI', seqNum, ackNum, ack, syn, fin, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
                 packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
                 s.sendall(packet) # Send the packet to the server
-    
-                #*******************RECEIVING SYN-ACK*********************#                                     #changed; instead of going to send_packet function,
-                server_packet = s.recv(struct.calcsize('!IIcccI'))                                              #just handle sending and receiving in main 
-                recvdSeqNum, recvdAckNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)         #for the syn-ack process
+                
+                #Logging packet sending
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                print(f"\"SEND\": <{seqNum}> <{ackNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
+
+                #*******************RECEIVING SYN-ACK*********************#                                                                        #changed; instead of going to send_packet function,
+                server_packet = s.recv(struct.calcsize('!IIcccI'))                                                    #just handle sending and receiving in main 
+                recvdSeqNum, recvdAckNum, A, S, F, lenPayload = struct.unpack('!IIcccI', server_packet)                #for the syn-ack process
                 server_message = s.recv(lenPayload)
                 message = struct.unpack(f'!{lenPayload}s', server_message)[0].decode('utf-8')                                  #NEED TO MANUALLY ADD LOG ENTRY
-
+                
+                #Logging packet sending
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                print(f"\"RECV\": <{seqNum}> <{ackNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
 
             #***********************SENDING ACK PACKET**********************#
             seqNum = recvdAckNum 
@@ -114,12 +125,12 @@ if __name__ == '__main__':
             syn = 'N'
             fin = 'N'
             payload = ''
+
             dt = datetime.now()
             date_time = datetime.timestamp(dt)
             timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
             print(f"Sending ACK Packet to server",{timestamp}, file=log)
-            response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
-
+            response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload, args.l) #args.l)?            #CHANGED ^
 
             #********************INITIATE CONTINUOUS MOTION SENSING******************#
             stillRunning = True
@@ -168,7 +179,7 @@ if __name__ == '__main__':
                 date_time = datetime.timestamp(dt)
                 timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
                 print(f"Sending fin flag to end connection",{timestamp},  file=log)
-                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
+                response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload, args.l) #args.l)?            #CHANGED ^
 
 
 
@@ -176,7 +187,7 @@ if __name__ == '__main__':
                 dt = datetime.now()
                 date_time = datetime.timestamp(dt)
                 timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
-                print(f"Closing socket",{timestamp} file=log)
+                print(f"Closing socket",{timestamp}, file=log)
 
 
 
