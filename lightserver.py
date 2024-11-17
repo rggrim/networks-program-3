@@ -68,7 +68,11 @@ if __name__ == '__main__':
                     print(f"Received connection from <{addr[0]}, {args.p}>", {timestamp}, file=log)
                 
                 #***************************RECEIVE SYN PACKET*******************************#
-                while True:
+                A = 'N'
+                S = 'N'
+                F = 'N'
+
+                while  ((A != 'Y') & (S != 'N') & (F != 'N')):
                     try:
                         client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
                         recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
