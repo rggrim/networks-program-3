@@ -5,12 +5,9 @@ import struct
 import random
 from gpiozero import MotionSensor
 from datetime import datetime
-import RPi.GPIO as GPIO # type: ignore
 
 # allows control of the GPIO pins on the Raspberry Pi
 PIR_PIN = 4
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(PIR_PIN, GPIO.IN)
 
 # Creates the packet
 def create_packet(sequenceNum, ackNum, A, S, F, payload):                                                          #CHANGED 
