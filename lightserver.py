@@ -59,6 +59,19 @@ if __name__ == '__main__':
                     timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
                     print(f"Received connection from <{addr[0]}, {args.p}>", {timestamp}, file=log)
                 
+                #***************************RECEIVE SYN PACKET*******************************#
+
+
+
+                #***************************SEND SYN-ACK PACKET*******************************#
+
+
+
+                #***************************RECEIVE ACK PACKET*******************************#
+
+
+
+                #***************************START MOTION SENSING SEQUENCE*********************#
                 while True:
                     try:
                         # Receive and unpack packet using the unpack_packet function
