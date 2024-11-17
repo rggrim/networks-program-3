@@ -5,35 +5,25 @@ import argparse
 import random
 from datetime import datetime
 
+ 
 def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
 
-    #The payload of each UDP packet sent by server and client MUST start with the following 12-byte header. 
-    #Sequence Number (32 bits): If SYN is present (the S flag is set) the sequence number is the initial sequence number (randomly choosen).
-    # Acknowledgement Number (32 bits): If the ACK bit is set, this field contains the value of the next sequence number the sender of the segment is expecting to receive. Once a connection is established this is always sent.
-    # The acknowledgement number is given in the unit of bytes (how many bytes you have sent)
-    # Not Used (29 bits): Must be zero.
-    # A (ACK, 1 bit): Indicates that there the value of Acknowledgment Number field is valid
-    # S (SYN, 1 bit): Synchronize sequence numbers
-    # F (FIN, 1 bit): Finish, No more data from sender
     # Unpack the header from the client's packet
-    ver, message_type, message_len = struct.unpack(header_format, client_packet)
+    recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
 
-    with open(logfile, 'a') as log: # Log the header information
+    with open(logfile, 'a') as log: # Log the header information                                                              #ADD TIMESTAMP/LOG
         print(f"Received Data: version: {ver} message_type: {message_type} length: {message_len}", file=log)
 
-    if ver == 17:
-        with open(logfile, 'a') as log:
-            print(f"VERSION ACCEPTED", file=log)
-        client_packet = conn.recv(message_len)  # Receive the payload from the client
+    
+    with open(logfile, 'a') as log:
+        print(f"VERSION ACCEPTED", file=log)
+    client_packet = conn.recv(message_len)  # Receive the payload from the client
 
-        payload = struct.unpack(f'{message_len}s', client_packet)
+    payload = struct.unpack(f'{message_len}s', client_packet)
 
-        return payload[0].decode('utf-8'), message_type
-    else: # Version is mismatched and don't receive the payload
-        with open(logfile, 'a') as log:
-            print(f"VERSION MISMATCH", file=log)
-        return None, message_type
+    return payload[0].decode('utf-8'), message_type
+
 
 def LightOn():
     print("Light is on")
@@ -54,12 +44,15 @@ if __name__ == '__main__':
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((host, port))
+        
         while True:
-            s.listen() # Listen for incoming connections
-            conn, addr = s.accept() # Accept the connection
+            s.listen()                  # Listen for incoming connections
+            conn, addr = s.accept()     # Accept the connection
+
             with conn:
-                with open(args.l, 'a') as log: # Log the connection
+                with open(args.l, 'a') as log: # Log the connection                                                     #ADD TIMESTAMP
                     print(f"Received connection from <{addr[0]}, {args.p}>", file=log)
+                
                 while True:
                     try:
                         # Receive and unpack packet using the unpack_packet function
@@ -95,3 +88,20 @@ if __name__ == '__main__':
                         print(f"RETURNING SUCCESS", file=log)
                     # Send the response packet to the client
                     conn.sendall(response_packet)
+
+
+
+
+###########################OLD VERSION CODE#########################
+#    if ver == 17:
+#        with open(logfile, 'a') as log:
+#            print(f"VERSION ACCEPTED", file=log)
+#        client_packet = conn.recv(message_len)  # Receive the payload from the client
+#
+#        payload = struct.unpack(f'{message_len}s', client_packet)
+#
+#        return payload[0].decode('utf-8'), message_type
+#    else: # Version is mismatched and don't receive the payload
+#        with open(logfile, 'a') as log:
+#            print(f"VERSION MISMATCH", file=log)
+#        return None, message_type
