@@ -23,7 +23,7 @@ def blink_led(blinks, duration):
         time.sleep(duration / blinks)
  
 def unpack_packet(conn, header_format, logfile):
-    client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
+    client_packet = conn.recv(struct.calcsize(header_format))           # Receive the packet from the client
 
     #********************************UNPACK CLIENT'S HEADER********************************#
     recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
@@ -31,7 +31,7 @@ def unpack_packet(conn, header_format, logfile):
     dt = datetime.now()
     date_time = datetime.timestamp(dt)
     timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
-    with open(logfile, 'a') as log:                                     # Log the header information                      #ADD TIMESTAMP/LOG
+    with open(logfile, 'a') as log:                                     # Log the header information 
         print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
 
 
@@ -70,7 +70,19 @@ if __name__ == '__main__':
                 #***************************RECEIVE SYN PACKET*******************************#
                 while True:
                     try:
-                        payload_string, message_type = unpack_packet(conn, header_format, args.l)
+                        client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
+                        recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
+
+                        dt = datetime.now()
+                        date_time = datetime.timestamp(dt)
+                        timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                        with open(args.l, 'a') as log:
+                            print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
+
+                        client_packet = conn.recv(payloadLen)
+                        payload = struct.unpack(f'{payloadLen}s', client_packet)
+
+
                         pass
                     except:
                         print("Connection closed or an error occurred")
@@ -89,7 +101,7 @@ if __name__ == '__main__':
                 while True:
                     try:
                         # Receive and unpack packet using the unpack_packet function
-                        payload_string, message_type = unpack_packet(conn, header_format, args.l)
+                        payload_string = unpack_packet(conn, header_format, args.l)
                         pass
                     except:
                         print("Connection closed or an error occurred")
