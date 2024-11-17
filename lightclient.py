@@ -91,7 +91,10 @@ if __name__ == '__main__':
                 syn = 'Y'
                 fin = 'N'
                 payload = ''
-                print(f"Sending SYN Packet to server", file=log)
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                print(f"Sending SYN Packet to server",{timestamp}, file=log)
                 #response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
                 header = struct.pack('!IIcccI', seqNum, ackNum, ack, syn, fin, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
                 packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
@@ -111,7 +114,10 @@ if __name__ == '__main__':
             syn = 'N'
             fin = 'N'
             payload = ''
-            print(f"Sending ACK Packet to server", file=log)
+            dt = datetime.now()
+            date_time = datetime.timestamp(dt)
+            timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+            print(f"Sending ACK Packet to server",{timestamp}, file=log)
             response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
 
@@ -160,13 +166,19 @@ if __name__ == '__main__':
                 syn = 'N'
                 fin = 'Y'
                 payload = ''
-                print(f"Sending fin flag to end connection", file=log)
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                print(f"Sending fin flag to end connection",{timestamp},  file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
 
 
 
             with open(args.l, 'a') as log:
-                print("Closing socket", file=log)
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                print(f"Closing socket",{timestamp} file=log)
 
 
 
