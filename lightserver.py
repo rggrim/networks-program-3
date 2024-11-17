@@ -15,12 +15,12 @@ def LightOn():
 def LightOff():
     led.off()
 
-def blink_led(blinks, duration):
-    for _ in range(blinks):
+def blink_led(b, d):
+    for _ in range(b):
         LightOn()
-        time.sleep(duration / blinks)
+        time.sleep(d / b)
         LightOff()
-        time.sleep(duration / blinks)
+        time.sleep(d / b)
  
 def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
