@@ -90,6 +90,9 @@ if __name__ == '__main__':
 
                         if S == 'N':
                             ackNum = recvdSequenceNum + 1 
+                            A = 'N'
+                            S = 'N'
+                            F = 'N'
                             header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
                             response_packet = header + "".encode('utf-8')
                             conn.sendall(response_packet)
