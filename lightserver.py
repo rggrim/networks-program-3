@@ -133,6 +133,21 @@ if __name__ == '__main__':
                 response_packet = header + "{payload}".encode('utf-8')
                 conn.sendall(response_packet)
 
+                #***************************WAIT FOR MOTION DETECTION*********************#
+                motion_packet = conn.recv(struct.calcsize(header_format))
+                recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, motion_packet)
+
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                with open(args.l, 'a') as log:
+                    print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
+
+                motion_packet = conn.recv(payloadLen)
+                motion_payload = struct.unpack(f'{payloadLen}s', motion_packet)
+
+                if motion_payload == ":MotionDetected":
+                    blink_led(blinks, duration)
 
 
 
