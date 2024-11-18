@@ -133,7 +133,7 @@ if __name__ == '__main__':
                 #***************************ACKNOWLEDGE MOTION SENSING RECEPTION*********************# 
                 ackNum = recvdSequenceNum + 1 
                 header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
-                response_packet = header + "{payload}".encode('utf-8')
+                response_packet = header + f"{payload}".encode('utf-8')
                 conn.sendall(response_packet)
 
 
