@@ -39,7 +39,7 @@ def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(payloadLen)
     payload = struct.unpack(f'{payloadLen}s', client_packet)
 
-    return payload[0].decode('utf-8') recvdSequenceNum, recvdAckNum, A, S, F, payloadLen
+    return payload[0].decode('utf-8'), recvdSequenceNum, recvdAckNum, A, S, F, payloadLen
 
 
 if __name__ == '__main__':
