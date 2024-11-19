@@ -75,18 +75,6 @@ if __name__ == '__main__':
                 while  ((A != 'N') & (S != 'Y') & (F != 'N')):
                     seqNum = random.randint(0, 2147483600)
                     try:
-    #                    client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
-    #                    recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
-    #
-    #                    dt = datetime.now()
-    #                    date_time = datetime.timestamp(dt)
-    #                    timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
-    #                    with open(args.l, 'a') as log:
-    #                        print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
-    #
-    #                    client_packet = conn.recv(payloadLen)
-    #                    payload = struct.unpack(f'{payloadLen}s', client_packet)
-
                         payload, recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = unpack_packet(conn, header_format, args.l)
 
                         if S == 'N':
@@ -124,14 +112,13 @@ if __name__ == '__main__':
                     try:
                         payload, recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = unpack_packet(conn, header_format, args.l)
                         
-                        if ((A != 'Y') & (S != 'N') & (F != 'N')):
-                            ackNum = recvdSequenceNum + 1 
-                            A = 'Y'
-                            S = 'Y'
-                            F = 'N'
-                            header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
-                            response_packet = header + "".encode('utf-8')
-                            conn.sendall(response_packet)
+                        ackNum = recvdSequenceNum + 1 
+                        A = 'Y'
+                        S = 'Y'
+                        F = 'N'
+                        header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
+                        response_packet = header + "".encode('utf-8')
+                        conn.sendall(response_packet)
                         pass
                     except:
                         print("Connection closed or an error occurred")
