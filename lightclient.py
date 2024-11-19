@@ -95,10 +95,9 @@ if __name__ == '__main__':
                 dt = datetime.now()
                 date_time = datetime.timestamp(dt)
                 timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
-                with open(log, 'a') as log: 
-                    print(f"Sending SYN Packet to server",{timestamp}, file=log)
-                #response, is_accepted = send_packet(s, seqNum, ackNum, ack, syn, fin, payload) #args.l)?            #CHANGED ^
-                header = struct.pack('!IIcccI', seqNum, ackNum, ack, syn, fin, len(payload))  # variable length for string         #NEEDS TO BE CHANGED
+                #with open(log, 'a') as log: 
+                #    print(f"\"SEND\": <{seqNum}> <{ackNum}> [\"{ack}\"] [\"{syn}\"] [\"{fin}\"]", {timestamp}, file=log)                 #CHANGED ^
+                header = struct.pack('!IIcccI', seqNum, ackNum, ack, syn, fin, len(payload))                                #NEEDS TO BE CHANGED
                 packet = header + struct.pack(f'!{len(payload)}s', payload.encode('utf-8'))
                 s.sendall(packet) # Send the packet to the server
                 
@@ -107,7 +106,7 @@ if __name__ == '__main__':
                 date_time = datetime.timestamp(dt)
                 timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
                 with open(log, 'a') as log: 
-                    print(f"\"SEND\": <{seqNum}> <{ackNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
+                    print(f"\"SEND\": <{seqNum}> <{ackNum}> [\"{ack}\"] [\"{syn}\"] [\"{fin}\"]", {timestamp}, file=log)
 
                 #*******************RECEIVING SYN-ACK*********************#                                                                        #changed; instead of going to send_packet function,
                 server_packet = s.recv(struct.calcsize('!IIcccI'))                                                    #just handle sending and receiving in main 
@@ -120,7 +119,7 @@ if __name__ == '__main__':
                 date_time = datetime.timestamp(dt)
                 timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
                 with open(log, 'a') as log: 
-                    print(f"\"RECV\": <{seqNum}> <{ackNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
+                    print(f"\"RECV\": <{recvdSeqNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
 
             #***********************SENDING ACK PACKET**********************#
             seqNum = recvdAckNum 
@@ -134,7 +133,7 @@ if __name__ == '__main__':
             date_time = datetime.timestamp(dt)
             timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
             with open(log, 'a') as log: 
-                print(f"Sending ACK Packet to server",{timestamp}, file=log)
+                print(f"\"SEND\": <{seqNum}> <{ackNum}> [\"{ack}\"] [\"{syn}\"] [\"{fin}\"]", {timestamp}, file=log)
             response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload, args.l) #args.l)?            #CHANGED ^
 
             #********************INITIATE CONTINUOUS MOTION SENSING******************#
@@ -180,12 +179,12 @@ if __name__ == '__main__':
                 ack = 'N'
                 syn = 'N'
                 fin = 'Y'
-                payload = ''
+                payload = ':Interaction with completed'
                 dt = datetime.now()
                 date_time = datetime.timestamp(dt)
                 timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
                 with open(log, 'a') as log: 
-                    print(f"Sending fin flag to end connection",{timestamp},  file=log)
+                    print(f":Interaction with completed",{timestamp},  file=log)
                 response, recvdSeqNum, recvdAckNum, A, S, F, lenPayload = send_packet(s, seqNum, ackNum, ack, syn, fin, payload, args.l) #args.l)?            #CHANGED ^
 
 
