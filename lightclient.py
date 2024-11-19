@@ -3,7 +3,7 @@ import argparse
 import socket
 import struct
 import random
-from gpiozero import MotionSensor
+from gpiozero import MotionSensor #type: ignore
 from datetime import datetime
 
 # allows control of the GPIO pins on the Raspberry Pi
