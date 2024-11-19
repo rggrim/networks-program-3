@@ -167,6 +167,27 @@ if __name__ == '__main__':
                 if motion_payload == ":MotionDetected":
                     blink_led(blinks, duration)
 
+                #***************************SEND EMPTY PACKET*******************************#
+                ackNum = recvdSequenceNum + 1
+                A = 'N'
+                S = 'Y'
+                F = 'N'
+                header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
+                response_packet = header + "".encode('utf-8')
+                conn.sendall(response_packet)
+
+                #Logging packet sending
+                dt = datetime.now()
+                date_time = datetime.timestamp(dt)
+                timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                with open(log, 'a') as log: 
+                    print(f"\"SEND\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
+
+                #***************************RECEIVE FIN PACKET*******************************#
+                payload, recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = unpack_packet(conn, header_format, args.l)
+                        
+                if ((A == 'N') & (S == 'N') & (F == 'Y')):
+                    socket.close()
 
 
 
