@@ -65,7 +65,8 @@ if __name__ == '__main__':
                     dt = datetime.now()
                     date_time = datetime.timestamp(dt)
                     timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
-                    print(f"Received connection from <{addr[0]}, {args.p}>", {timestamp}, file=log)
+                    with open(log, 'a') as log: 
+                        print(f"Received connection from <{addr[0]}, {args.p}>", {timestamp}, file=log)
                 
                 #***************************RECEIVE SYN PACKET*******************************#
                 A = 'N'
@@ -104,7 +105,8 @@ if __name__ == '__main__':
                 dt = datetime.now()
                 date_time = datetime.timestamp(dt)
                 timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
-                print(f"\"SEND\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
+                with open(log, 'a') as log: 
+                    print(f"\"SEND\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
 
 
                 #******************************RECEIVE ACK PACKET**********************************#
