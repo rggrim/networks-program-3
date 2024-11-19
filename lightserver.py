@@ -39,7 +39,7 @@ def unpack_packet(conn, header_format, logfile):
     client_packet = conn.recv(payloadLen)
     payload = struct.unpack(f'{payloadLen}s', client_packet)
 
-    return payload[0].decode('utf-8')
+    return payload[0].decode('utf-8') recvdSequenceNum, recvdAckNum, A, S, F, payloadLen
 
 
 if __name__ == '__main__':
@@ -74,7 +74,6 @@ if __name__ == '__main__':
                 
                 while  ((A != 'N') & (S != 'Y') & (F != 'N')):
                     seqNum = random.randint(0, 2147483600)
-
                     try:
                         client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
                         recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
@@ -103,14 +102,49 @@ if __name__ == '__main__':
 
 
                 #***************************SEND SYN-ACK PACKET*******************************#
-
+                ackNum = recvdSequenceNum + 1 
+                A = 'Y'
+                S = 'Y'
+                F = 'N'
+                header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
+                response_packet = header + "".encode('utf-8')
+                conn.sendall(response_packet)
 
                 #Logging packet sending
                 dt = datetime.now()
                 date_time = datetime.timestamp(dt)
                 timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
                 print(f"\"SEND\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
-                #***************************RECEIVE ACK PACKET*******************************#
+
+
+                #******************************RECEIVE ACK PACKET**********************************#
+                while  ((A != 'Y') & (S != 'Y') & (F != 'N')):
+                    try:
+                        client_packet = conn.recv(struct.calcsize(header_format))  # Receive the packet from the client
+                        recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = struct.unpack(header_format, client_packet)
+
+                        dt = datetime.now()
+                        date_time = datetime.timestamp(dt)
+                        timestamp = date_time.strftime("%Y-%m-%d-%H-%M-%S")
+                        with open(args.l, 'a') as log:
+                            print(f"\"RECV\": <{recvdSequenceNum}> <{recvdAckNum}> [\"{A}\"] [\"{S}\"] [\"{F}\"]", {timestamp}, file=log)
+
+                        client_packet = conn.recv(payloadLen)
+                        payload = struct.unpack(f'{payloadLen}s', client_packet)
+
+                        if S == 'N':
+                            ackNum = recvdSequenceNum + 1 
+                            A = 'N'
+                            S = 'N'
+                            F = 'N'
+                            header = struct.pack(header_format, seqNum, ackNum, A, S, F, 0)
+                            response_packet = header + "".encode('utf-8')
+                            conn.sendall(response_packet)
+                        pass
+                    except:
+                        print("Connection closed or an error occurred")
+                        break
+
 
 
 
