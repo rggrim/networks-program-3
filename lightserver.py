@@ -149,7 +149,7 @@ if __name__ == '__main__':
                 motion_packet = conn.recv(payloadLen)
                 motion_payload = struct.unpack(f'{payloadLen}s', motion_packet)
 
-                if motion_payload == ":MotionDetected":
+                if motion_payload.decode('utf-8') == ":MotionDetected":
                     blink_led(blinks, duration)
 
 
