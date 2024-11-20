@@ -186,7 +186,7 @@ if __name__ == '__main__':
                 #***************************RECEIVE FIN PACKET*******************************#
                 payload, recvdSequenceNum, recvdAckNum, A, S, F, payloadLen = unpack_packet(conn, header_format, args.l)
                         
-                if ((A == 'N') & (S == 'N') & (F == 'Y')):
+                if ((A == 'N') & (S == 'N') & (F == 'Y') & (payload == ":Interaction with completed")):
                     socket.close()
 
 
