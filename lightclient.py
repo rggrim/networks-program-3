@@ -83,6 +83,7 @@ if __name__ == '__main__':
             A = 'N'
             S = 'N'
             F = 'N'
+            recvdAckNum = 0
 
             while ((A != 'Y') & (S != 'Y') & (F != 'N')):
                 #*****************SENDING SYN PACKET*****************#
